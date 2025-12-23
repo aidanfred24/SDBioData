@@ -1,15 +1,32 @@
-#' Title
+#' Process Gene Expression Data
 #'
-#' @param data
-#' @param missing_value
-#' @param min_counts
-#' @param n_min_samples_count
-#' @param counts_transform
-#' @param counts_log_start
+#' Performs pre-processing, missing value imputation, filtering, and transformation
+#' on gene expression count data.
 #'
-#' @returns
+#' @param data A numeric matrix or data frame of gene expression counts.
+#' @param missing_value Character. Method to handle missing values. Options:
+#'   * `"geneMedian"`: Impute using the median expression of the gene across samples.
+#'   * `"treatAsZero"`: Replace NAs with 0.
+#'   * `"GroupMedian"`: Impute using the median of the sample group (detected from colnames).
+#' @param min_counts Numeric. Minimum count threshold for filtering genes.
+#' @param n_min_samples_count Numeric. Minimum number of samples that must meet
+#'   the `min_counts` threshold for a gene to be retained.
+#' @param counts_transform Integer. Method for data transformation:
+#'   1. log2(CPM + `counts_log_start`)
+#'   2. Variance Stabilizing Transformation (VST) via `DESeq2`.
+#'   3. Regularized Log (rlog) via `DESeq2`.
+#' @param counts_log_start Numeric. Constant added to counts before log transformation
+#'   (used when `counts_transform = 1`).
+#'
+#' @returns A list containing:
+#'   * `data`: The processed and transformed data matrix.
+#'   * `mean_kurtosis`: The mean kurtosis of the data.
+#'   * `raw_counts`: The filtered raw counts (before transformation).
+#'   * `data_type_warning`: Status code (0 = success, -1 = integer/kurtosis warning, -2 = all zeros).
+#'   * `data_size`: Dimensions of the original and processed data.
+#'
+#' @md
 #' @export
-#'
 process_data <- function(data,
                          missing_value,
                          min_counts,
@@ -152,18 +169,19 @@ process_data <- function(data,
     return(results)
 }
 
-#' Detect groups by sample names
+#' Detect Groups by Sample Names
 #'
-#' Detects groups from column names in sample info file so that they can be used
-#' for things such as coloring plots or building the model for DEG analysis.
+#' Detects experimental groups based on column names in the data or an
+#' optional sample info matrix.
 #'
-#' @param sample_names Vector of column headings from data file or design file
-#' @param sample_info Matrix of the experiment design information
+#' @param sample_names Vector of column names (sample IDs) from the data.
+#' @param sample_info Optional matrix or data frame of experiment design information.
+#'   If `NULL`, groups are inferred by stripping numeric suffixes and "Rep" labels
+#'   from `sample_names`.
 #'
+#' @returns A character vector representing the group assignment for each sample.
+#' @note This function is mainly called internally by other processing functions.
 #' @export
-#' @return A character vector with the groups
-#' @note This function is mainly called internally in other idepGolem functions.
-#'
 detect_groups <- function(sample_names, sample_info = NULL) {
     # sample_names are col names parsing samples by either the name
     # or using a data frame of sample infos.

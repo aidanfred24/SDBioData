@@ -2,22 +2,24 @@
 % Please edit documentation in R/process_data.R
 \name{detect_groups}
 \alias{detect_groups}
-\title{Detect groups by sample names}
+\title{Detect Groups by Sample Names}
 \usage{
 detect_groups(sample_names, sample_info = NULL)
 }
 \arguments{
-\item{sample_names}{Vector of column headings from data file or design file}
+\item{sample_names}{Vector of column names (sample IDs) from the data.}
 
-\item{sample_info}{Matrix of the experiment design information}
+\item{sample_info}{Optional matrix or data frame of experiment design information.
+If `NULL`, groups are inferred by stripping numeric suffixes and "Rep" labels
+from `sample_names`.}
 }
 \value{
-A character vector with the groups
+A character vector representing the group assignment for each sample.
 }
 \description{
-Detects groups from column names in sample info file so that they can be used
-for things such as coloring plots or building the model for DEG analysis.
+Detects experimental groups based on column names in the data or an
+optional sample info matrix.
 }
 \note{
-This function is mainly called internally in other idepGolem functions.
+This function is mainly called internally by other processing functions.
 }

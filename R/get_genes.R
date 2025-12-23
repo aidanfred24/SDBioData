@@ -1,14 +1,20 @@
-#' Get Genes
+#' Get Gene Information
 #'
-#' @param species_id
-#' @param genes
+#' Retrieves gene information (e.g., Ensembl IDs, positions) for a specific species,
+#' optionally filtered by a list of user-provided gene identifiers.
 #'
-#' @returns
+#' @param species_id Numeric. The ID of the desired species.
+#' @param genes A vector or list of gene identifiers to filter by.
+#'   If `NULL`, returns the full gene table.
+#'
+#' @returns A data frame containing gene information (from the `geneInfo` table).
+#'   If `genes` are provided, the result is filtered to match the converted Ensembl IDs.
+#' @md
 #' @export
 #'
 #' @examples
 get_genes <- function(species_id,
-                      genes) {
+                      genes = NULL) {
 
     gene_table <- get_table(species_id = species_id,
                             table = "geneInfo")

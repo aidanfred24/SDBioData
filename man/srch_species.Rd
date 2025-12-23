@@ -4,17 +4,22 @@
 \alias{srch_species}
 \title{Search for Species by Name}
 \usage{
-srch_species(query, name_type)
+srch_species(query, name_type = "academic")
 }
 \arguments{
-\item{query}{Species name or partial name}
+\item{query}{Character. The species name, partial name, or ID to search for.}
 
-\item{name_type}{Name type for species ("common", "academic", "id); Be aware
-that common names are not available for all species}
+\item{name_type}{Character. The type of name to search against. Options:
+\itemize{
+\item \code{"academic"}: Scientific name (default).
+\item \code{"common"}: Common name (note: not available for all species).
+\item \code{"id"}: Exact species ID match.
+}}
 }
 \value{
-Data frame of all species info with names that match the query
+A data frame containing information for all matching species.
+Throws an error if no species are found.
 }
 \description{
-Search for Species by Name
+Searches the organism database for species matching a query string.
 }

@@ -1,12 +1,24 @@
 #' Get Species Pathways
 #'
-#' @param genes Vector or column of data frame containing genes of interest
-#' @param species_id ID of desired species
+#' Retrieves pathway information for a specific species and optionally filters
+#' for specific genes.
 #'
-#' @returns Data frame of pathways that contain the provided genes (returns
-#'  all pathways if genes = NULL)
+#' @param species_id Numeric. The ID of the desired species
+#'   (e.g., from `srch_species`).
+#' @param genes A vector or column of a data frame containing gene IDs of interest.
+#'   If `NULL` (default), returns all pathways for the species.
+#'
+#' @returns A data frame containing pathway information. If `genes` are provided,
+#'   the data frame is filtered to include only pathways containing those genes
+#'   and joined with gene mapping data.
+#'
+#' @details
+#' The function first retrieves the `pathway` and `pathwayInfo` tables for the
+#' specified species. If a list of genes is provided, it converts the IDs to
+#' Ensembl IDs, matches them against the pathway map, and joins the results
+#' with pathway metadata.
+#' @md
 #' @export
-#'
 get_pathways <- function(species_id,
                          genes = NULL) {
 

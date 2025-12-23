@@ -7,11 +7,12 @@
 list_tables(species_id = NULL)
 }
 \arguments{
-\item{species_id}{Selected species ID (Loads organism info data if NULL)}
+\item{species_id}{Numeric. The selected species ID.
+If \code{NULL}, loads the general organism info database.}
 }
 \value{
-Returns a list of table names
+A character vector of table names available in the database connection.
 }
 \description{
-List Table Options
+Lists all available tables within the database for a specific species.
 }

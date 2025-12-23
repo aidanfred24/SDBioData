@@ -2,19 +2,30 @@
 % Please edit documentation in R/convert_id.R
 \name{convert_id}
 \alias{convert_id}
-\title{Convert gene IDs to ensembl data.}
+\title{Convert Gene IDs to Ensembl}
 \usage{
 convert_id(genes, data = NULL, species_id, max_sample_ids = 100)
 }
 \arguments{
-\item{data}{}
+\item{genes}{A vector or character string of gene identifiers to convert.}
 
-\item{max_sample_ids}{The number of gene ids used to determine species}
+\item{data}{Optional data frame or matrix. If provided, the function attempts
+to match \code{genes} to the row names or a column in \code{data} and merges the
+conversion results with the original data.}
+
+\item{species_id}{Numeric. The ID of the species for the database connection.}
+
+\item{max_sample_ids}{Integer. The maximum number of gene IDs to use when
+guessing the ID type (optimization parameter). Defaults to 100.}
 }
 \value{
-A large list of the conversion ID information that was gathered
- from querying the database with the original IDs.
+A data frame.
+\itemize{
+\item If \code{data} is \code{NULL}: Returns a mapping table with original IDs and Ensembl IDs.
+\item If \code{data} is provided: Returns \code{data} merged with the Ensembl IDs.
+Returns \code{NULL} if \code{species_id} is missing or no matches are found.
+}
 }
 \description{
-Convert gene IDs to ensembl data.
+Queries the database to map user-provided gene identifiers to Ensembl IDs.
 }

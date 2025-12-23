@@ -1,10 +1,16 @@
 #' Search for Species by Name
 #'
-#' @param query Species name or partial name
-#' @param name_type Name type for species ("common", "academic", "id"); Be aware
-#'  that common names are not available for all species
+#' Searches the organism database for species matching a query string.
 #'
-#' @returns Data frame of all species info with names that match the query
+#' @param query Character. The species name, partial name, or ID to search for.
+#' @param name_type Character. The type of name to search against. Options:
+#'   - `"academic"`: Scientific name (default).
+#'   - `"common"`: Common name (note: not available for all species).
+#'   - `"id"`: Exact species ID match.
+#'
+#' @returns A data frame containing information for all matching species.
+#'   Throws an error if no species are found.
+#' @md
 #' @export
 #'
 srch_species <- function(query,

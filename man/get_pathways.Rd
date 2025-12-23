@@ -7,14 +7,24 @@
 get_pathways(species_id, genes = NULL)
 }
 \arguments{
-\item{species_id}{ID of desired species}
+\item{species_id}{Numeric. The ID of the desired species
+(e.g., from \code{srch_species}).}
 
-\item{genes}{Vector or column of data frame containing genes of interest}
+\item{genes}{A vector or column of a data frame containing gene IDs of interest.
+If \code{NULL} (default), returns all pathways for the species.}
 }
 \value{
-Data frame of pathways that contain the provided genes (returns
- all pathways if genes is NULL)
+A data frame containing pathway information. If \code{genes} are provided,
+the data frame is filtered to include only pathways containing those genes
+and joined with gene mapping data.
 }
 \description{
-Get Species Pathways
+Retrieves pathway information for a specific species and optionally filters
+for specific genes.
+}
+\details{
+The function first retrieves the \code{pathway} and \code{pathwayInfo} tables for the
+specified species. If a list of genes is provided, it converts the IDs to
+Ensembl IDs, matches them against the pathway map, and joins the results
+with pathway metadata.
 }

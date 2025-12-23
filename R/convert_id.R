@@ -1,13 +1,21 @@
-#'  Convert gene IDs to ensembl data.
+#' Convert Gene IDs to Ensembl
 #'
-#' @param max_sample_ids The number of gene ids used to determine species
-#' @param species_id
-#' @param genes
-#' @param data
+#' Queries the database to map user-provided gene identifiers to Ensembl IDs.
 #'
+#' @param genes A vector or character string of gene identifiers to convert.
+#' @param data Optional data frame or matrix. If provided, the function attempts
+#'   to match `genes` to the row names or a column in `data` and merges the
+#'   conversion results with the original data.
+#' @param species_id Numeric. The ID of the species for the database connection.
+#' @param max_sample_ids Integer. The maximum number of gene IDs to use when
+#'   guessing the ID type (optimization parameter). Defaults to 100.
+#'
+#' @returns A data frame.
+#'   * If `data` is `NULL`: Returns a mapping table with original IDs and Ensembl IDs.
+#'   * If `data` is provided: Returns `data` merged with the Ensembl IDs.
+#'   Returns `NULL` if `species_id` is missing or no matches are found.
+#' @md
 #' @export
-#' @return A large list of the conversion ID information that was gathered
-#'  from querying the database with the original IDs.
 convert_id <- function(genes,
                        data = NULL,
                        species_id,
@@ -105,9 +113,9 @@ convert_id <- function(genes,
         match_idx <- which(colSums(data == genes) == nrow(data))
         gene_col <- colnames(data)[match_idx]
 
-        if (is.null(gene_col)) {
+        if (length(gene_col) == 0) {
             if (sum(rownames(data) == genes) == nrow(data)) {
-                gene_col <- "row.names"
+                gene_col <- "key"
             } else {
                 stop("Genes not found in provided dataset")
             }
@@ -120,9 +128,12 @@ convert_id <- function(genes,
         conversion_table <- result[, 1:2]
         colnames(conversion_table) <- c(gene_col, "ensembl_gene_id")
 
+        data$key <- rownames(data)
+
         result <- dplyr::left_join(x = conversion_table,
                                    y = data,
-                                   by = gene_col)
+                                   by = gene_col) %>%
+            dplyr::select(-key)
     }
 
     message(paste(nrow(result), "genes found with Ensembl IDs"))

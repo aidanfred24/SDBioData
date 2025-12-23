@@ -4,20 +4,22 @@
 \alias{get_table}
 \title{Get Table from Selected Database}
 \usage{
-get_table(species_id = NULL, srch_species = FALSE, table = NULL)
+get_table(species_id = NULL, table = NULL)
 }
 \arguments{
-\item{species_id}{Selected species ID (Loads organism info data if NULL)}
+\item{species_id}{Numeric. The selected species ID.
+If \code{NULL}, the function defaults to loading general organism info.}
 
-\item{srch_species}{TRUE/FALSE if function is being called from srch_species
-function, FALSE by default}
-
-\item{table}{Selected table, NULL by default}
+\item{table}{Character. The name of the table to retrieve (e.g., "geneInfo", "pathway").
+If \code{NULL}, defaults to "geneInfo" (if \code{species_id} is provided) or "orgInfo"
+(if \code{species_id} is \code{NULL}).}
 }
 \value{
-Returns data frame selected from table list
+A data frame containing the data from the selected table.
 }
 \description{
-Prints list of tables for selected species and allows user to select
- from the list, returning the selected table
+Retrieves a specific table from the database for a selected species.
+}
+\seealso{
+\code{\link{list_tables}} to see available tables for a species.
 }

@@ -1,0 +1,44 @@
+---
+title: "Database Access and Preparation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data-access-and-prep}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SDBioData)
+```
+
+## Introduction
+
+This vignette provides a tutorial for accessing the South Dakota State University (SDSU) bioinformatics/genomic database used in Integrated Differential Expression and Pathway Analysis ([iDEP](https://bioinformatics.sdstate.edu/idep/)). We will also discuss how to leverage this package to prepare data for further analysis.
+
+In current research scenarios, it is common to work with _______ blank data. The data shown below, `finch_sample`, is a subset of this kind of data that we may come across naturally. This data contains 100 gene with ______ measurements across several experimental groups, seen in the column names. The species of interest is the Zebra Finch (Taeniopygia guttata).
+
+```{r data}
+head(finch_sample)
+```
+
+## The `srch_species` function
+
+When considering Differential Expression and Pathway Analysis as methods for research, it may first be best for a researcher to convert the gene IDs of their data to the standard Ensembl format. The SDSU database is great for this use case, but first we need to know: Does the database contain our species?
+
+To answer this and discover how we can identify our species in the database, we use the `srch_species` function.
+
+```{r srch_species}
+
+srch_results <- srch_species(query = "Zebra", 
+                             name_type = "common")
+
+srch_results
+```
+

@@ -32,9 +32,13 @@ get_pathways <- function(species_id,
         genes <- convert_id(genes = genes,
                             species_id = species_id)
 
-        ix <- match(path_map$gene, genes[, 2])
+        ix <- unlist(
+            lapply(path_map$gene, function(x){
+                return(x %in% genes[,2])
+            })
+        )
 
-        path_map <- path_map[ix[which(!is.na(ix))],]
+        path_map <- path_map[ix,]
         path_map$pathwayID <- as.character(path_map$pathwayID)
 
         by <- dplyr::join_by(pathwayID == id)

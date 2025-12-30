@@ -4,15 +4,16 @@
 \alias{srch_species}
 \title{Search for Species by Name}
 \usage{
-srch_species(query, name_type = "academic")
+srch_species(query, name_type = "all")
 }
 \arguments{
 \item{query}{Character. The species name, partial name, or ID to search for.}
 
 \item{name_type}{Character. The type of name to search against. Options:
 \itemize{
-\item \code{"academic"}: Scientific name (default).
-\item \code{"common"}: Common name (note: not available for all species).
+\item \code{"all"}: Default. Searches both primary and academic names.
+\item \code{"academic"}: Scientific name. (note: not available for all species)
+\item \code{"primary"}: Primary name in database (common name or academic).
 \item \code{"id"}: Exact species ID match.
 }}
 }

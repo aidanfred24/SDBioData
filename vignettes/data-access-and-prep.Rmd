@@ -30,15 +30,64 @@ head(finch_sample)
 
 ## The `srch_species` function
 
-When considering Differential Expression and Pathway Analysis as methods for research, it may first be best for a researcher to convert the gene IDs of their data to the standard Ensembl format. The SDSU database is great for this use case, but first we need to know: Does the database contain our species?
+When considering Differential Expression and Pathway Analysis as methods for research, it may first be best for a researcher to convert the gene IDs of their data to the standard Ensembl or STRINGdb format. The SDSU database is great for this use case, but first we need to know: Does the database contain our species?
 
 To answer this and discover how we can identify our species in the database, we use the `srch_species` function.
 
 ```{r srch_species}
 
 srch_results <- srch_species(query = "Zebra", 
-                             name_type = "common")
+                             name_type = "all")
 
 srch_results
+```
+
+This search through the database yields the following species:
+
+ * Zebrafish
+ * Zebra Finch
+ * Zebra mbuna
+ * Dreissena polymorpha Zebra mussel
+ * Maylandia zebra
+
+So we have found that our species of interest, Zebra Finch, is contained in the bioinformatics database. While searching with `name_type = "all"` is most efficient, we can also search by primary name, academic name, and ID number. However, only Ensembl encoded species have an available entry in the `academicName` column, and searching by ID number requires prior knowledge of the database, so searching by "primary" name (`name2` column) or "all" is optimal for the most results. It is also often that the primary name includes the academic name, regardless. Below are examples of these search methods.
+
+#### Primary Example
+
+```{r primary_srch}
+
+srch_species(query = "Zebra",
+             name_type = "primary")
+```
+
+#### Academic Example
+
+```{r academic_srch}
+srch_species(query = "Taeniopygia guttata",
+             name_type = "academic")
+```
+
+#### ID Example
+
+```{r id_srch}
+srch_species(query = 210,
+             name_type = "id")
+
+```
+
+## Converting/Filtering Genes
+
+```{r conv_example}
+
+head(rownames(finch_sample))
+
+conv_table <- convert_id(genes = rownames(finch_sample),
+                         species_id = 210)
+
+head(conv_table)
+
+finch_conv <- convert_id(genes = rownames(finch_sample),
+                         data = finch_sample,
+                         species_id = 210)
 ```
 

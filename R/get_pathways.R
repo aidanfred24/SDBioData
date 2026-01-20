@@ -32,11 +32,7 @@ get_pathways <- function(species_id,
         genes <- convert_id(genes = genes,
                             species_id = species_id)
 
-        ix <- unlist(
-            lapply(path_map$gene, function(x){
-                return(x %in% genes[,2])
-            })
-        )
+        ix <- path_map$gene %in% genes[, 2]
 
         path_map <- path_map[ix,]
         path_map$pathwayID <- as.character(path_map$pathwayID)
@@ -46,7 +42,11 @@ get_pathways <- function(species_id,
         pathways <- dplyr::left_join(x = path_map,
                                      y = pathways,
                                      by)
-        pathways <- pathways[!duplicated(pathways[, -1]), -1]
+
+        # remove the first column by name or index without copying the whole
+        # object for the check
+        pathways <- pathways[, -1]
+        pathways <- unique(pathways)
     }
 
     if (nrow(pathways) == 0) {

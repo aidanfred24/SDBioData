@@ -20,7 +20,6 @@ convert_id <- function(genes,
                        data = NULL,
                        species_id,
                        max_sample_ids = 100) {
-
     if (is.null(species_id)) {
         return(NULL)
     }
@@ -66,7 +65,7 @@ convert_id <- function(genes,
 
     # if database connection error
     # see ? try
-    if(inherits(conn_db, "try-error")) {
+    if (inherits(conn_db, "try-error")) {
         return(NULL)
     }
 
@@ -101,15 +100,14 @@ convert_id <- function(genes,
     result <- result[which(!duplicated(result[, 1])), ]
 
     if (is.null(data) || is.null(dim(data))) {
-
         genes <- as.data.frame(genes)
         colnames(genes)[1] <- "id"
-        result <- dplyr::left_join(x = result[,1:2],
-                                   y = genes,
-                                   by = "id")
-
+        result <- dplyr::left_join(
+            x = result[, 1:2],
+            y = genes,
+            by = "id"
+        )
     } else {
-
         match_idx <- which(colSums(data == genes) == nrow(data))
         gene_col <- colnames(data)[match_idx]
 
@@ -130,9 +128,11 @@ convert_id <- function(genes,
 
         data$key <- rownames(data)
 
-        result <- dplyr::left_join(x = conversion_table,
-                                   y = data,
-                                   by = gene_col) %>%
+        result <- dplyr::left_join(
+            x = conversion_table,
+            y = data,
+            by = gene_col
+        ) %>%
             dplyr::select(-key)
     }
 

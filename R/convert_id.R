@@ -113,14 +113,13 @@ convert_id <- function(genes,
 
         if (length(gene_col) == 0) {
             if (sum(rownames(data) == genes) == nrow(data)) {
-                gene_col <- "key"
+                gene_col <- "rownames"
+                # Create key from rownames
+                data$rownames <- rownames(data)
             } else {
                 stop("Genes not found in provided dataset")
             }
         }
-
-        # Always create key from rownames to support select(-key) at the end
-        data$key <- rownames(data)
 
         # Replace gene column with cleaned gene IDs
         data[[gene_col]] <- query_set
@@ -137,8 +136,12 @@ convert_id <- function(genes,
             x = conversion_table,
             y = data,
             by = gene_col
-        ) %>%
-            dplyr::select(-key)
+        )
+
+        if (gene_col == "rownames"){
+            result <- result |>
+                dplyr::select(-rownames)
+        }
     }
 
     message(paste(nrow(result), "genes found with Ensembl IDs"))

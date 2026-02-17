@@ -18,12 +18,15 @@ process_data(
 
 \item{missing_value}{Character. Method to handle missing values. Options:
 \itemize{
-\item \code{"geneMedian"}: Impute using the median expression of the gene across samples.
+\item \code{"geneMedian"}: Impute using the median expression of the gene across
+samples.
 \item \code{"treatAsZero"}: Replace NAs with 0.
-\item \code{"groupMedian"}: Impute using the median of the sample group (detected from colnames).
+\item \code{"groupMedian"}: Impute using the median of the sample group
+(detected from colnames).
 }}
 
-\item{min_cpm}{Numeric. Minimum count threshold for filtering genes.}
+\item{min_cpm}{Numeric. Minimum counts per million threshold for filtering
+genes.}
 
 \item{n_min_samples_count}{Numeric. Minimum number of samples that must meet
 the \code{min_cpm} threshold for a gene to be retained.}
@@ -36,13 +39,14 @@ the \code{min_cpm} threshold for a gene to be retained.}
 \item Regularized Log (rlog) via \code{DESeq2}.
 }}
 
-\item{counts_log_start}{Numeric. Constant added to counts before log transformation
+\item{counts_log_start}{Numeric. Constant added to counts before log
+transformation
 (used when \code{counts_transform = 1}).}
 }
 \value{
 The processed and transformed data matrix.
 }
 \description{
-Performs pre-processing, missing value imputation, filtering, and transformation
-on gene expression count data.
+Performs pre-processing, missing value imputation, filtering, and
+transformation on gene expression count data.
 }

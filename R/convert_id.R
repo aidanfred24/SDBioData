@@ -119,14 +119,19 @@ convert_id <- function(genes,
             }
         }
 
+        # Always create key from rownames to support select(-key) at the end
+        data$key <- rownames(data)
+
+        # Replace gene column with cleaned gene IDs
+        data[[gene_col]] <- query_set
+
         # many user id to one ensembl id mapping, keep all
         # remove duplicates in ensembl_gene_id
         # result <- result[which(!duplicated(result[, 2])), ]
 
         conversion_table <- result[, 1:2]
-        colnames(conversion_table) <- c(gene_col, "ensembl_gene_id")
 
-        data$key <- rownames(data)
+        colnames(conversion_table) <- c(gene_col, "ensembl_gene_id")
 
         result <- dplyr::left_join(
             x = conversion_table,

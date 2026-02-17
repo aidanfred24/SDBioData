@@ -16,7 +16,7 @@
 #' @md
 #' @export
 T2G_prep <- function(species_id = NULL,
-                     category = c("KEGG", "GOBP", "GOCC", "GOMF"),
+                     category = "GOBP",
                      genes = NULL) {
 
     # Check for species

@@ -7,33 +7,28 @@
 #' @param missing_value Character. Method to handle missing values. Options:
 #'   * `"geneMedian"`: Impute using the median expression of the gene across samples.
 #'   * `"treatAsZero"`: Replace NAs with 0.
-#'   * `"GroupMedian"`: Impute using the median of the sample group (detected from colnames).
-#' @param min_counts Numeric. Minimum count threshold for filtering genes.
+#'   * `"groupMedian"`: Impute using the median of the sample group (detected from colnames).
+#' @param min_cpm Numeric. Minimum count threshold for filtering genes.
 #' @param n_min_samples_count Numeric. Minimum number of samples that must meet
-#'   the `min_counts` threshold for a gene to be retained.
+#'   the `min_cpm` threshold for a gene to be retained.
 #' @param counts_transform Integer. Method for data transformation:
+#'   0. None (Raw Counts).
 #'   1. log2(CPM + `counts_log_start`)
 #'   2. Variance Stabilizing Transformation (VST) via `DESeq2`.
 #'   3. Regularized Log (rlog) via `DESeq2`.
 #' @param counts_log_start Numeric. Constant added to counts before log transformation
 #'   (used when `counts_transform = 1`).
 #'
-#' @returns A list containing:
-#'   * `data`: The processed and transformed data matrix.
-#'   * `mean_kurtosis`: The mean kurtosis of the data.
-#'   * `raw_counts`: The filtered raw counts (before transformation).
-#'   * `data_type_warning`: Status code (0 = success, -1 = integer/kurtosis warning, -2 = all zeros).
-#'   * `data_size`: Dimensions of the original and processed data.
+#' @returns The processed and transformed data matrix.
 #'
 #' @md
 #' @export
 process_data <- function(data,
                          missing_value,
-                         min_counts,
+                         min_cpm,
                          n_min_samples_count,
                          counts_transform,
                          counts_log_start) {
-
     # Sort by standard deviation -----------
     data <- data[order(-apply(
         data[, 1:dim(data)[2]],
@@ -51,7 +46,7 @@ process_data <- function(data,
             }
         } else if (missing_value == "treatAsZero") {
             data[is.na(data)] <- 0
-        } else if (missing_value == "GroupMedian") {
+        } else if (missing_value == "groupMedian") {
             sample_groups <- detect_groups(colnames(data))
             for (group in unique(sample_groups)) {
                 samples <- which(sample_groups == group)
@@ -81,82 +76,62 @@ process_data <- function(data,
         }
     }
 
-    data_size_original <- dim(data)
-    kurtosis_log <- 50
-
-    results <- list(
-        data = as.matrix(data),
-        mean_kurtosis = NULL,
-        raw_counts = NULL,
-        data_type_warning = 0,
-        data_size = c(data_size_original),
-        p_vals = NULL
-    )
-
-    # Compute kurtosis ---------
-    results$mean_kurtosis <- mean(apply(data, 2, e1071::kurtosis), na.rm = TRUE)
-
-    if (!is.integer(data) && results$mean_kurtosis < kurtosis_log) {
-        results$data_type_warning <- -1
-    }
-
     data <- round(data, 0)
     # Check if any columns have all zeros
     if (any(apply(data, 2, function(col) all(col == 0)))) {
-        results$data_type_warning <- -2
-        return(results)
+        return(as.matrix(data))
     }
 
 
     data <- data[which(apply(
         edgeR::cpm(edgeR::DGEList(counts = data)),
         1,
-        function(y) sum(y >= min_counts)
+        function(y) sum(y >= min_cpm)
     ) >= n_min_samples_count), ]
 
-    #R cannot handle integers larger than 3 billion, which can impact popular
-    #packages such as DESeq2. R still uses 32-bit integers, and the largest
-    #allowable integer is 2^32 −1. In an unusual case, a user's RNA-Seq counts
-    #matrix included a count of 4 billion for a single gene, which was converted
-    #to NA, leading to an error in DESeq2. This issue also caused the iDEP app to crash.
-    if(max(data) > 2e9) {
+    # R cannot handle integers larger than 3 billion, which can impact popular
+    # packages such as DESeq2. R still uses 32-bit integers, and the largest
+    # allowable integer is 2^32 −1. In an unusual case, a user's RNA-Seq counts
+    # matrix included a count of 4 billion for a single gene, which was converted
+    # to NA, leading to an error in DESeq2. This issue also caused the iDEP app to crash.
+    if (max(data) > 2e9) {
         scale_factor <- max(data) / (2^32 - 1)
-        #round up scale_factor to the nearest integer
+        # round up scale_factor to the nearest integer
         scale_factor <- ceiling(scale_factor / 10 + 1) * 10 #  just to be safe.
         # divide by scale factor and round to the nearest integer, for the entire matrix, data
         data <- round(data / scale_factor)
-        }
-
-    results$raw_counts <- data
-
-    # Construct DESeqExpression Object ----------
-    tem <- rep("A", dim(data)[2])
-    tem[1] <- "B"
-    col_data <- cbind(colnames(data), tem)
-    colnames(col_data) <- c("sample", "groups")
-
-    dds <- DESeq2::DESeqDataSetFromMatrix(
-        countData = data,
-        colData = col_data,
-        design = ~groups
-    )
-    dds <- DESeq2::estimateSizeFactors(dds)
-
-    # Counts Transformation ------------
-    if (counts_transform == 3) {
-        data <- DESeq2::rlog(dds, blind = TRUE)
-        data <- SummarizedExperiment::assay(data)
-    } else if (counts_transform == 2) {
-        data <- DESeq2::vst(dds, blind = TRUE)
-        data <- SummarizedExperiment::assay(data)
-    } else {
-        data <- log2(BiocGenerics::counts(
-            dds,
-            normalized = TRUE
-        ) + counts_log_start)
     }
 
-    results$data_size <- c(results$data_size, dim(data))
+
+    # Construct DESeqExpression Object ----------
+    if (counts_transform != 0) {
+        tem <- rep("A", dim(data)[2])
+        tem[1] <- "B"
+        col_data <- cbind(colnames(data), tem)
+        colnames(col_data) <- c("sample", "groups")
+
+        dds <- DESeq2::DESeqDataSetFromMatrix(
+            countData = data,
+            colData = col_data,
+            design = ~groups
+        )
+        dds <- DESeq2::estimateSizeFactors(dds)
+
+        # Counts Transformation ------------
+        if (counts_transform == 3) {
+            data <- DESeq2::rlog(dds, blind = TRUE)
+            data <- SummarizedExperiment::assay(data)
+        } else if (counts_transform == 2) {
+            data <- DESeq2::vst(dds, blind = TRUE)
+            data <- SummarizedExperiment::assay(data)
+        } else {
+            data <- log2(BiocGenerics::counts(
+                dds,
+                normalized = TRUE
+            ) + counts_log_start)
+        }
+    }
+
 
     data <- data[order(-apply(
         data[, 1:dim(data)[2]],
@@ -164,9 +139,7 @@ process_data <- function(data,
         sd
     )), ]
 
-    results$data <- as.matrix(data)
-
-    return(results)
+    return(as.matrix(data))
 }
 
 #' Detect Groups by Sample Names
@@ -225,4 +198,3 @@ detect_groups <- function(sample_names, sample_info = NULL) {
     }
     return(as.character(sample_group))
 }
-

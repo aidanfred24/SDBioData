@@ -1,14 +1,17 @@
 #' Process Gene Expression Data
 #'
-#' Performs pre-processing, missing value imputation, filtering, and transformation
-#' on gene expression count data.
+#' Performs pre-processing, missing value imputation, filtering, and
+#' transformation on gene expression count data.
 #'
 #' @param data A numeric matrix or data frame of gene expression counts.
 #' @param missing_value Character. Method to handle missing values. Options:
-#'   * `"geneMedian"`: Impute using the median expression of the gene across samples.
+#'   * `"geneMedian"`: Impute using the median expression of the gene across
+#'   samples.
 #'   * `"treatAsZero"`: Replace NAs with 0.
-#'   * `"groupMedian"`: Impute using the median of the sample group (detected from colnames).
-#' @param min_cpm Numeric. Minimum count threshold for filtering genes.
+#'   * `"groupMedian"`: Impute using the median of the sample group
+#'   (detected from colnames).
+#' @param min_cpm Numeric. Minimum counts per million threshold for filtering
+#' genes.
 #' @param n_min_samples_count Numeric. Minimum number of samples that must meet
 #'   the `min_cpm` threshold for a gene to be retained.
 #' @param counts_transform Integer. Method for data transformation:
@@ -16,7 +19,8 @@
 #'   1. log2(CPM + `counts_log_start`)
 #'   2. Variance Stabilizing Transformation (VST) via `DESeq2`.
 #'   3. Regularized Log (rlog) via `DESeq2`.
-#' @param counts_log_start Numeric. Constant added to counts before log transformation
+#' @param counts_log_start Numeric. Constant added to counts before log
+#' transformation
 #'   (used when `counts_transform = 1`).
 #'
 #' @returns The processed and transformed data matrix.

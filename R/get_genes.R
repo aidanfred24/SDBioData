@@ -12,7 +12,6 @@
 #' @md
 #' @export
 #'
-#' @examples
 get_genes <- function(species_id,
                       genes = NULL) {
 

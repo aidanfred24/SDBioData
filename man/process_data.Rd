@@ -7,7 +7,7 @@
 process_data(
   data,
   missing_value,
-  min_counts,
+  min_cpm,
   n_min_samples_count,
   counts_transform,
   counts_log_start
@@ -20,15 +20,16 @@ process_data(
 \itemize{
 \item \code{"geneMedian"}: Impute using the median expression of the gene across samples.
 \item \code{"treatAsZero"}: Replace NAs with 0.
-\item \code{"GroupMedian"}: Impute using the median of the sample group (detected from colnames).
+\item \code{"groupMedian"}: Impute using the median of the sample group (detected from colnames).
 }}
 
-\item{min_counts}{Numeric. Minimum count threshold for filtering genes.}
+\item{min_cpm}{Numeric. Minimum count threshold for filtering genes.}
 
 \item{n_min_samples_count}{Numeric. Minimum number of samples that must meet
-the \code{min_counts} threshold for a gene to be retained.}
+the \code{min_cpm} threshold for a gene to be retained.}
 
 \item{counts_transform}{Integer. Method for data transformation:
+0. None (Raw Counts).
 \enumerate{
 \item log2(CPM + \code{counts_log_start})
 \item Variance Stabilizing Transformation (VST) via \code{DESeq2}.
@@ -39,14 +40,7 @@ the \code{min_counts} threshold for a gene to be retained.}
 (used when \code{counts_transform = 1}).}
 }
 \value{
-A list containing:
-\itemize{
-\item \code{data}: The processed and transformed data matrix.
-\item \code{mean_kurtosis}: The mean kurtosis of the data.
-\item \code{raw_counts}: The filtered raw counts (before transformation).
-\item \code{data_type_warning}: Status code (0 = success, -1 = integer/kurtosis warning, -2 = all zeros).
-\item \code{data_size}: Dimensions of the original and processed data.
-}
+The processed and transformed data matrix.
 }
 \description{
 Performs pre-processing, missing value imputation, filtering, and transformation

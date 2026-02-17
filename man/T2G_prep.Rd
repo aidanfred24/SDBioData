@@ -4,11 +4,7 @@
 \alias{T2G_prep}
 \title{TERM2GENE Data Prep for iDEP Database}
 \usage{
-T2G_prep(
-  species_id = NULL,
-  category = c("KEGG", "GOBP", "GOCC", "GOMF"),
-  genes = NULL
-)
+T2G_prep(species_id = NULL, category = "GOBP", genes = NULL)
 }
 \arguments{
 \item{species_id}{Numeric. The ID of a desired species from database, found

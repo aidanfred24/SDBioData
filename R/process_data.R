@@ -20,7 +20,8 @@
 #'   2. Variance Stabilizing Transformation (VST) via `DESeq2`.
 #'   3. Regularized Log (rlog) via `DESeq2`.
 #' @param counts_log_start Numeric. Constant added to counts before log
-#' transformation
+#' transformation. Usually between 1 and 10. Higher values reduce noise but
+#' decrease sensitivity
 #'   (used when `counts_transform = 1`).
 #'
 #' @returns The processed and transformed data matrix.
@@ -28,11 +29,11 @@
 #' @md
 #' @export
 process_data <- function(data,
-                         missing_value,
-                         min_cpm,
-                         n_min_samples_count,
-                         counts_transform,
-                         counts_log_start) {
+                         missing_value = "geneMedian",
+                         min_cpm = 0.5,
+                         n_min_samples_count = 1,
+                         counts_transform = 0,
+                         counts_log_start = 4) {
     # Sort by standard deviation -----------
     data <- data[order(-apply(
         data[, 1:dim(data)[2]],

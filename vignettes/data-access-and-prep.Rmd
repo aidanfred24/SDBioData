@@ -35,9 +35,10 @@ When considering Differential Expression and Pathway Analysis as methods for res
 To answer this and discover how we can identify our species in the database, we use the `srch_species` function.
 
 ```{r srch_species}
-
-srch_results <- srch_species(query = "Zebra", 
-                             name_type = "all")
+srch_results <- srch_species(
+  query = "Zebra",
+  name_type = "all"
+)
 
 srch_results
 ```
@@ -55,39 +56,46 @@ So we have found that our species of interest, Zebra Finch, is contained in the 
 #### Primary Example
 
 ```{r primary_srch}
-
-srch_species(query = "Zebra",
-             name_type = "primary")
+srch_species(
+  query = "Zebra",
+  name_type = "primary"
+)
 ```
 
 #### Academic Example
 
 ```{r academic_srch}
-srch_species(query = "Taeniopygia guttata",
-             name_type = "academic")
+srch_species(
+  query = "Taeniopygia guttata",
+  name_type = "academic"
+)
 ```
 
 #### ID Example
 
 ```{r id_srch}
-srch_species(query = 210,
-             name_type = "id")
-
+srch_species(
+  query = 210,
+  name_type = "id"
+)
 ```
 
 ## Converting/Filtering Genes
 
 ```{r conv_example}
-
 head(rownames(finch_sample))
 
-conv_table <- convert_id(genes = rownames(finch_sample),
-                         species_id = 210)
+conv_table <- convert_id(
+  genes = rownames(finch_sample),
+  species_id = 210
+)
 
 head(conv_table)
 
-finch_conv <- convert_id(genes = rownames(finch_sample),
-                         data = finch_sample,
-                         species_id = 210)
+finch_conv <- convert_id(
+  genes = rownames(finch_sample),
+  data = finch_sample,
+  species_id = 210
+)
 ```
 

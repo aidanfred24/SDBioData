@@ -23,6 +23,7 @@ Imports:
     edgeR,
     R.utils,
     RSQLite,
+    stats,
     SummarizedExperiment
 RoxygenNote: 7.3.3
 Suggests: 

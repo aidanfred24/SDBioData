@@ -92,5 +92,5 @@ head(processed_data)
 
 ## Requirements
 
-*   R >= 3.5
+*   R >= 4.1.0
 *   **Imports**: `RSQLite`, `DESeq2`, `edgeR`, `dplyr`, `SummarizedExperiment`, `BiocGenerics`, `R.utils`

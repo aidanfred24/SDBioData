@@ -34,6 +34,18 @@ process_data <- function(data,
                          n_min_samples_count = 1,
                          counts_transform = 0,
                          counts_log_start = 4) {
+    # Check for gene ids in data frame
+    if (is.data.frame(data)) {
+        char_cols <- sapply(data, function(x) is.character(x) || is.factor(x))
+        if (sum(char_cols) > 1) {
+            stop("Data frame must have only one column of character or factor (gene IDs) data.")
+        } else if (sum(char_cols) == 1) {
+            # Assign gene ids to rownames
+            id_col <- which(char_cols)
+            rownames(data) <- trimws(as.character(data[, id_col]))
+            data <- data[, !char_cols]
+        }
+    }
     # Sort by standard deviation -----------
     data <- data[order(-apply(
         data[, 1:dim(data)[2]],

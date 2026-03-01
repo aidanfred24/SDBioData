@@ -13,6 +13,27 @@
 #'   * Male vs. Female
 #'   * Heat vs. Control}
 #' }
-#' @source <https://www.who.int/teams/global-tuberculosis-programme/data>
 #' @md
 "finch_sample"
+
+#' Hypoxia Data Differential Expression Analysis Results
+#'
+#' Results of performing differential expression analysis (DESeq2) on gene
+#' counts gathered in the following experiment: RNAseq transcriptomic profile of
+#' glioblastoma stem-like cells derived from U87MG cell line treated with a
+#' selective A3 adenosine receptor antagonist (MRS1220) under hypoxia.
+#'
+#' @format ## `hypox_deseq`
+#' A data frame with 13,818 rows and 6 columns:
+#' \describe{
+#'   \item{baseMean}{Mean of normalized counts for all samples}
+#'   \item{log2FoldChange}{Log2 fold change between treated and control}
+#'   \item{lfcSE}{Standard error estimate for the log2 fold change estimate}
+#'   \item{stat}{Wald statistic}
+#'   \item{pvalue}{Wald test p-value}
+#'   \item{padj}{Benjamini-Hochberg adjusted p-value}
+#' }
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE100146}
+#' @md
+"hypox_deseq"
+

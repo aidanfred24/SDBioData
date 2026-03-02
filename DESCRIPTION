@@ -21,6 +21,7 @@ Imports:
     dplyr,
     e1071,
     edgeR,
+    magrittr,
     R.utils,
     RSQLite,
     stats,

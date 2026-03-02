@@ -75,13 +75,18 @@ The `clusterProfiler` function `enricher` requires background annotation data th
 
 We will extract the KEGG pathways mapping for all the genes in our original `hypox_deseq` dataset, which acts as our background universe. This feature of `SDBioData` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
 
-```{r t2g_prep}
+```{r t2g_prep, eval = FALSE}
 bg_genes <- T2G_prep(
   species_id = 96,
   category = c("KEGG"),
   genes = rownames(hypox_deseq)
 )
 ```
+
+```{r t2g_load, echo=FALSE}
+bg_genes <- hypox_T2G
+```
+
 
 ## Over-Representation Analysis (ORA)
 

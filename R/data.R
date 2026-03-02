@@ -37,3 +37,14 @@
 #' @md
 "hypox_deseq"
 
+#' Example KEGG Pathway Mapping for Hypoxia
+#'
+#' An example TERM2GENE mapping tailored for the `hypox_deseq` dataset,
+#' demonstrating the `T2G_prep` function's output.
+#'
+#' @format A data frame with 2 columns:
+#' \describe{
+#'   \item{description}{Pathway ID or description}
+#'   \item{gene}{Ensembl Gene ID}
+#' }
+"hypox_T2G"

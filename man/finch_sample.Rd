@@ -19,9 +19,6 @@ A data frame with 100 rows and 19 columns
 }
 }
 }
-\source{
-\url{https://www.who.int/teams/global-tuberculosis-programme/data}
-}
 \usage{
 finch_sample
 }

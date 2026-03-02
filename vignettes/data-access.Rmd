@@ -1,0 +1,174 @@
+---
+title: "Database Access and Preparation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{data-access}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SDBioData)
+```
+
+## Introduction
+
+This vignette provides a tutorial for accessing the South Dakota State University (SDSU) bioinformatics/genomic database used in Integrated Differential Expression and Pathway Analysis ([iDEP](https://bioinformatics.sdstate.edu/idep/)). We will also discuss how to leverage this package to prepare data for further analysis.
+
+In current research scenarios, it is common to work with RNA-Seq counts data. The data shown below, `finch_sample`, is a subset of this kind of data that we may come across naturally. This data contains 100 gene with counts measurements across several experimental groups, seen in the column names. The species of interest is the Zebra Finch (Taeniopygia guttata).
+
+```{r data}
+head(finch_sample)
+```
+
+## The `srch_species` function
+
+When considering Differential Expression and Pathway Analysis as methods for research, it may first be best for a researcher to convert the gene IDs of their data to the standard Ensembl or STRINGdb format. The SDSU database is great for this use case, but first we need to know: Does the database contain our species?
+
+To answer this and discover how we can identify our species in the database, we use the `srch_species` function.
+
+```{r srch_species}
+srch_results <- srch_species(
+  query = "Zebra",
+  name_type = "all"
+)
+
+srch_results
+```
+
+This search through the database yields the following species:
+
+ * Zebrafish
+ * Zebra Finch
+ * Zebra mbuna
+ * Dreissena polymorpha Zebra mussel
+ * Maylandia zebra
+
+So we have found that our species of interest, Zebra Finch, is contained in the bioinformatics database and is labeled with the **species ID 210**. While searching with `name_type = "all"` is most efficient, we can also search by primary name, academic name, and ID number. However, only Ensembl encoded species have an available entry in the `academicName` column, and searching by ID number requires prior knowledge of the database, so searching by "primary" name (`name2` column) or "all" is optimal for the most results. It is also often that the primary name includes the academic name, regardless. Below are examples of these search methods.
+
+#### Primary Example
+
+```{r primary_srch}
+srch_species(
+  query = "Zebra",
+  name_type = "primary"
+)
+```
+
+#### Academic Example
+
+```{r academic_srch}
+srch_species(
+  query = "Taeniopygia guttata",
+  name_type = "academic"
+)
+```
+
+#### ID Example
+
+```{r id_srch}
+srch_species(
+  query = 210,
+  name_type = "id"
+)
+```
+
+The most important piece of information to retain from the data returned by `srch_species` is the `id` column. This is how many functions in this package will know which species to use for their operations.
+
+## Exploring Species Data Tables
+
+Now that we know our species ID is 210, we might want to discover what specific data and metadata is available for this species within the database. The `list_tables` function allows us to see all the tables present for a given species.
+
+```{r list_tables}
+table_names <- list_tables(species_id = 210)
+
+table_names
+```
+
+Once we have identified a table of interest, we can retrieve its contents using the `get_table` function. For instance, we can fetch the "geneInfo" table, which contains important gene metadata like chromosomes, start positions, GC content, Ensembl IDs, and more. 
+
+```{r get_table}
+gene_info <- get_table(
+  species_id = 210,
+  table = "geneInfo"
+)
+
+head(gene_info[,1:5])
+```
+
+The functions `get_genes` and `get_pathways` can also be used to obtain gene metadata and pathway information relative to the list of genes being studied. Below we use the genes from our `finch_sample` data to do so. Note that these functions rely on Ensembl ID conversions from `convert_id`, discussed later in this vignette.
+
+```{r gene_path}
+gene_info <- get_genes(species_id = 210,
+                       genes = rownames(finch_sample))
+
+head(gene_info[,1:5])
+
+path_info <- get_pathways(species_id = 210,
+                          genes = rownames(finch_sample))
+
+head(path_info)
+```
+
+
+## Converting/Filtering Genes
+
+Once we have identified the correct species ID for our data (in this case, our ID is 210), we can use the `convert_id` function to standardize our gene IDs. This step is crucial for matching the gene names in SDSU's database, allowing us to retrieve pathway information for our genes and proceed to further analysis.
+
+If we only provide a vector of gene names to `convert_id`, it will return a table mapping our original IDs to the standard Ensembl format. If we also provide the raw data frame, it will return the data frame with Ensemble gene names substituted, automatically filtering out genes that cannot be mapped. 
+
+```{r conv_example}
+head(rownames(finch_sample))
+
+# Providing just a vector
+conv_table <- convert_id(
+  genes = rownames(finch_sample),
+  species_id = 210
+)
+
+head(conv_table)
+
+# Providing a vector AND data
+finch_conv <- convert_id(
+  genes = rownames(finch_sample),
+  data = finch_sample,
+  species_id = 210
+)
+
+knitr::kable(head(finch_conv[, 1:3]))
+```
+
+Please note that, if our genes cannot be mapped to Ensembl IDs, we can lose large portions of our data. To best negate this, ensure that your IDs are well documented, have Ensembl counterparts, and contain few special characters.
+
+## Processing Data
+
+After standardizing our gene IDs, the next step prior to analysis is typically to clean our count data. This involves handling any missing values, filtering out genes with consistently low expression across samples, and potentially applying transformations to our count data, making it more suited for further exploratory or differential analysis.
+
+The `process_data` function provides a compact way to complete these steps in our analysis. It can impute missing values using methods like `"geneMedian"` or `"treatAsZero"`, filter genes based on Counts Per Million (CPM), and apply normalizations such as base-2 log, Variance Stabilizing Transformation (VST), or Regularized Log (rlog). Note that if the given data contains a column of gene IDs, that column will be stored as the rownames of the processed data.
+
+Here is an example of processing the converted Finch data using the default settings, which include imputing missing values with the overall gene median, filtering for genes with at least 0.5 CPM in at least 1 sample, and returning the raw counts without transformation.
+
+```{r process_example}
+nrow(finch_conv)
+
+processed_data <- process_data(
+  data = finch_conv,
+  missing_value = "geneMedian",
+  min_cpm = 0.5,
+  n_min_samples_count = 1,
+  counts_transform = 0
+)
+
+nrow(processed_data)
+
+knitr::kable(head(processed_data[, 1:3]))
+```
+
+The above information covers all that is needed to properly access the SDSU bioinformatics database and prepare your own data for further analysis like differential expression and pathway enrichment. Any extra filtering of data will need to be on the user's end or recommended to the developers as a new feature. Feel free to make suggestions!

@@ -137,6 +137,8 @@ convert_id <- function(genes,
             y = data,
             by = gene_col
         )
+        result <- data.frame(result[,-2],
+                             row.names = result$ensembl_gene_id)
 
         if (gene_col == "rownames"){
             result <- result |>

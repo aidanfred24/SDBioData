@@ -23,6 +23,8 @@ get_table <- function(species_id = NULL,
     } else if (is.null(table) && is.null(species_id)) {
         table <- "orgInfo"
         message("No table or species provided, using orgInfo by default")
+    } else if (!is.character(table)){
+        stop("Table selection must be character type")
     }
 
     # Retrieve table from database file

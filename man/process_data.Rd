@@ -6,11 +6,11 @@
 \usage{
 process_data(
   data,
-  missing_value,
-  min_cpm,
-  n_min_samples_count,
-  counts_transform,
-  counts_log_start
+  missing_value = "geneMedian",
+  min_cpm = 0.5,
+  n_min_samples_count = 1,
+  counts_transform = 0,
+  counts_log_start = 4
 )
 }
 \arguments{
@@ -40,7 +40,8 @@ the \code{min_cpm} threshold for a gene to be retained.}
 }}
 
 \item{counts_log_start}{Numeric. Constant added to counts before log
-transformation
+transformation. Usually between 1 and 10. Higher values reduce noise but
+decrease sensitivity
 (used when \code{counts_transform = 1}).}
 }
 \value{

@@ -4,7 +4,7 @@
 \alias{get_pathways}
 \title{Get Species Pathways}
 \usage{
-get_pathways(species_id, genes = NULL)
+get_pathways(species_id, genes = NULL, category = "GOBP")
 }
 \arguments{
 \item{species_id}{Numeric. The ID of the desired species
@@ -12,6 +12,10 @@ get_pathways(species_id, genes = NULL)
 
 \item{genes}{A vector or column of a data frame containing gene IDs of interest.
 If \code{NULL} (default), returns all pathways for the species.}
+
+\item{category}{Character. A vector or character constant of pathway
+categories/databases (e.g. KEGG, GOBP, GOCC, etc.). It is not recommended to
+use all categories, as some species have many, leading to performance issues}
 }
 \value{
 A data frame containing pathway information. If \code{genes} are provided,

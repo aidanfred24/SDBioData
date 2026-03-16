@@ -9,7 +9,7 @@
 #' @returns Data frame of pathway categories for given species
 #' @export
 #'
-path_cat <- function(species_id = NULL){
+path_categories <- function(species_id = NULL){
 
     # Check for species
     if (is.null(species_id)) {

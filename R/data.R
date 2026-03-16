@@ -1,20 +1,20 @@
-#' Sample of Zebra Finch Gene Counts
+#' Hypoxia Data Gene Counts
 #'
-#' A subset of Zebra Finch (Taeniopygia guttata) gene count readings of 21,407
-#' genes. The subset contains 100 randomly sampled genes from 19 individuals
-#' from different experimental groups.
+#' Gene counts gathered in the following experiment: RNAseq transcriptomic profile of
+#' glioblastoma stem-like cells derived from U87MG cell line treated with a
+#' selective A3 adenosine receptor antagonist (MRS1220) under hypoxia.
 #'
-#' @format ## `finch_sample`
-#' A data frame with 100 rows and 19 columns
+#' @format ## `hypoxia_reads`
+#' A data frame with 35,238 rows and 4 columns:
 #' \describe{
-#'   \item{Row Names}{Gene Name/Label}
-#'   \item{Columns}{Gene count readings for sepearate groups}
-#'   \item{Experimental Groups}{
-#'   * Male vs. Female
-#'   * Heat vs. Control}
+#'   \item{MRS1220_hypoxia_rep1}{Treatment replication 1 counts}
+#'   \item{MRS1220_hypoxia_rep2}{Treatment replication 2 counts}
+#'   \item{vehicle_hypoxia_rep1}{Control replication 1 counts}
+#'   \item{vehicle_hypoxia_rep2}{Control replication 2 counts}
 #' }
+#' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE100146}
 #' @md
-"finch_sample"
+"hypoxia_reads"
 
 #' Hypoxia Data Differential Expression Analysis Results
 #'
@@ -35,7 +35,7 @@
 #' }
 #' @source \url{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE100146}
 #' @md
-"hypox_deseq"
+"hypoxia_deseq"
 
 #' Example KEGG Pathway Mapping for Hypoxia
 #'
@@ -47,4 +47,4 @@
 #'   \item{description}{Pathway ID or description}
 #'   \item{gene}{Ensembl Gene ID}
 #' }
-"hypox_T2G"
+"hypoxia_T2G"

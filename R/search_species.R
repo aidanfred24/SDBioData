@@ -14,7 +14,7 @@
 #' @md
 #' @export
 #'
-srch_species <- function(query,
+search_species <- function(query,
                          name_type = "all"){
 
     types <- setNames(c("name2", "academicName"),

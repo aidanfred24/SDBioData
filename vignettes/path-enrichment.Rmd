@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 Pathway enrichment analysis is a vital step in understanding the biological relevance of differential expression results. By mapping significant genes to known functional categories, researchers can gain insights into the cellular processes and pathways affected by their experimental conditions. 
 
-In this vignette, we will explore how to perform pathway enrichment analysis using the `SDBioData` package in conjunction with the popular `clusterProfiler` package. We will utilize a sample dataset, `hypox_deseq`, which contains differential expression results comparing treatment under hypoxic conditions.
+In this vignette, we will explore how to perform pathway enrichment analysis using the `SDBioData` package in conjunction with the popular `clusterProfiler` package. We will utilize a sample dataset, `hypoxia_deseq`, which contains differential expression results comparing treatment under hypoxic conditions.
 
 First, let's load the required packages and the example dataset.
 
@@ -28,7 +28,7 @@ library(clusterProfiler)
 library(dplyr)
 
 # Preview the first few rows
-head(hypox_deseq)
+head(hypoxia_deseq)
 ```
 
 ## Identifying Differentially Expressed Genes (DEGs)
@@ -39,7 +39,7 @@ We apply a strict threshold to identify significant genes, such as an adjusted p
 
 ```{r define_deg}
 # Define up- and down- regulation based on LFC and padj
-df <- hypox_deseq |>
+df <- hypoxia_deseq |>
   as.data.frame() |>
   mutate(diffexp = case_when(
     log2FoldChange > 0 & padj < 0.05 ~ "UP",
@@ -73,18 +73,18 @@ deg_results_list <- split(df, df$diffexp)
 
 The `clusterProfiler` function `enricher` requires background annotation data that maps pathway categories (TERMs) to gene IDs (GENEs). With the `SDBioData` package, fetching this information is streamlined using the `T2G_prep` function.
 
-We will extract the KEGG pathways mapping for all the genes in our original `hypox_deseq` dataset, which acts as our background universe. This feature of `SDBioData` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
+We will extract the KEGG pathways mapping for all the genes in our original `hypoxia_deseq` dataset, which acts as our background universe. This feature of `SDBioData` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
 
 ```{r t2g_prep, eval = FALSE}
 bg_genes <- T2G_prep(
   species_id = 96,
   category = c("KEGG"),
-  genes = rownames(hypox_deseq)
+  genes = rownames(hypoxia_deseq)
 )
 ```
 
 ```{r t2g_load, echo=FALSE}
-bg_genes <- hypox_T2G
+bg_genes <- hypoxia_T2G
 ```
 
 
@@ -101,7 +101,7 @@ genecount_cutoff <- 5
 # Apply enricher across Up/Down lists
 res <- lapply(names(deg_results_list), function(direction) {
   enricher(
-    gene = rownames(deg_results_list[[direction]]), 
+    gene = rownames(deg_results_list[[direction]]),
     pvalueCutoff = 0.05,
     TERM2GENE = bg_genes
   )
@@ -134,10 +134,10 @@ res_sig <- res_df[target_pws, ] |>
 
 # View enriched pathways for UP-regulated genes
 res_up <- res_sig |> filter(diffexp == "UP")
-head(res_up[,c("GeneRatio", "FoldEnrichment", "p.adjust")])
+head(res_up[, c("GeneRatio", "FoldEnrichment", "p.adjust")])
 # View enriched pathways for DOWN-regulated genes
 res_down <- res_sig |> filter(diffexp == "DOWN")
-head(res_up[,c("GeneRatio", "FoldEnrichment", "p.adjust")])
+head(res_up[, c("GeneRatio", "FoldEnrichment", "p.adjust")])
 ```
 
 ## Gene Set Enrichment Analysis (GSEA)
@@ -148,8 +148,10 @@ To perform GSEA, we must rank all valid genes. One typical approach is to calcul
 
 ```{r gsea_prep}
 # Create a ranked geneList
-geneList <- setNames(object = hypox_deseq$log2FoldChange, 
-                     nm = rownames(hypox_deseq))
+geneList <- setNames(
+  object = hypoxia_deseq$log2FoldChange,
+  nm = rownames(hypoxia_deseq)
+)
 
 # Order the list from highest to lowest
 geneList <- sort(geneList, decreasing = TRUE)
@@ -171,7 +173,7 @@ gsea_res <- gsea@result |>
   arrange(p.adjust) |>
   slice(1:20)
 
-head(gsea_res[,c("setSize", "enrichmentScore", "NES", "p.adjust")])
+head(gsea_res[, c("setSize", "enrichmentScore", "NES", "p.adjust")])
 ```
 
 By leveraging both ORA and GSEA, we can obtain complementary perspectives on the functional changes induced by our experimental conditions. The `SDBioData` functions help seamlessly bridge basic count/results data with advanced pathway analysis libraries.

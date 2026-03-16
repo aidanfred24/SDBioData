@@ -41,25 +41,10 @@ convert_id <- function(genes,
     query_set <- unique(toupper(gsub("\n| ", "", query_set)))
     # genes should have at least two characters
     query_set <- query_set[which(nchar(query_set) > 1)]
+    data <- data[which(nchar(query_set) > 1),]
+    genes <- genes[which(nchar(query_set) > 1)]
 
     query_string <- paste0("('", paste(query_set, collapse = "', '"), "')")
-
-    # use a small set of genes to guess species and idType; to improve speed
-    # use a small set of gene ids, with the max #
-    # when the query is small, use the quary
-
-    # acutal number of samples, for calculating % later
-    n_sample_ids <- length(query_set)
-    test_query_string <- query_string
-    if (length(query_set) > max_sample_ids) {
-        n_sample_ids <- max_sample_ids
-        test_query_set <- sample(query_set, max_sample_ids)
-        test_query_string <- paste0(
-            "('",
-            paste(test_query_set, collapse = "', '"),
-            "')"
-        )
-    }
 
     conn_db <- connect_database(species_id = species_id)
 

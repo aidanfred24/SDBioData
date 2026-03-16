@@ -31,10 +31,10 @@ Before analyzing data, check if your species is available in the database using 
 ```r
 library(SDBioData)
 
-# Search for "Zebra" to find Zebra Finch
-srch_results <- srch_species(query = "Zebra", name_type = "all")
+# Search for "Human" to find Human
+srch_results <- srch_species(query = "Human", name_type = "all")
 print(srch_results)
-# Returns matches like: Zebrafish, Zebra Finch, etc.
+# Returns matches like: Human, Pediculus humanus, etc.
 ```
 
 ### 2. ID Conversion
@@ -42,17 +42,17 @@ print(srch_results)
 You can convert gene IDs in your dataset to standard Ensembl IDs using `convert_id`.
 
 ```r
-# Example using the built-in 'finch_sample' dataset
-data(finch_sample)
+# Example using the built-in 'hypoxia_reads' dataset
+data(hypoxia_reads)
 
-# Convert IDs for a vector of genes (Species ID 210 = Zebra Finch)
-conv_table <- convert_id(genes = rownames(finch_sample), species_id = 210)
+# Convert IDs for a vector of genes (Species ID 96 = Human)
+conv_table <- convert_id(genes = rownames(hypoxia_reads), species_id = 96)
 head(conv_table)
 
 # OR convert the entire data matrix relative to the species
-finch_conv <- convert_id(genes = rownames(finch_sample),
-                         data = finch_sample,
-                         species_id = 210)
+hypox_conv <- convert_id(genes = rownames(hypoxia_reads),
+                         data = hypoxia_reads,
+                         species_id = 96)
 ```
 
 ### 3. Connect to Database
@@ -60,9 +60,9 @@ finch_conv <- convert_id(genes = rownames(finch_sample),
 If you need direct access to the underlying SQLite database for a species:
 
 ```r
-# Connect to the Zebra Finch database (ID 210)
+# Connect to the Human database (ID 96)
 # This handles downloading the necessary database files automatically
-conn <- connect_database(species_id = 210)
+conn <- connect_database(species_id = 96)
 
 # Use standard DBI queries
 db_tables <- DBI::dbListTables(conn)
@@ -78,7 +78,7 @@ Use `process_data` to clean and transform raw count matrices for analysis. This 
 ```r
 # Example processing workflow
 processed_list <- process_data(
-  data = finch_sample,
+  data = hypoxia_reads,
   missing_value = "geneMedian", # Impute strategy
   min_counts = 10,              # Filter threshold
   n_min_samples_count = 2,      # Min samples meeting threshold

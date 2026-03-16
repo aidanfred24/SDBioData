@@ -19,48 +19,10 @@ T2G_prep <- function(species_id = NULL,
                      category = "GOBP",
                      genes = NULL) {
 
-    # Check for species
-    if (is.null(species_id)) {
-        stop("species_id is required")
-    }
-
-    # Connect to database
-    conn <- connect_database(species_id = species_id)
-
-    # Convert genes if provided
-    if (!is.null(genes)) {
-
-        # Convert to ensembl IDs
-        gene_map <- convert_id(genes = genes, species_id = species_id)
-
-        if (is.null(gene_map) || nrow(gene_map) == 0) {
-           stop("Could not map any genes to Ensembl IDs.")
-        }
-
-        # Build query string for genes
-        ens_ids <- unique(gene_map$ens)
-        genes_sql <- paste0("'", ens_ids, "'", collapse = ",")
-    }
-
-    # Construct Path Map Query
-
-    # Build query string for categories
-    category_sql <- paste0("'", category, "'", collapse = ",")
-    query <- paste0("select * from pathway where category IN (",
-                    category_sql,
-                    ")")
-
-    # Append gene query
-    if (!is.null(genes)) {
-        query <- paste0(query,
-                        " AND gene IN (",
-                        genes_sql,
-                        ")")
-    }
-    query <- paste0(query, ";")
-
-    # Run query
-    path_map <- DBI::dbGetQuery(conn, statement = query)
+    # Query pathways
+    path_map <- path_filter(species_id = species_id,
+                            genes = genes,
+                            category = category)
 
     if (nrow(path_map) == 0) {
         DBI::dbDisconnect(conn)
@@ -68,6 +30,7 @@ T2G_prep <- function(species_id = NULL,
         return(NULL)
     }
 
+    conn <- connect_database(species_id = species_id)
     # Retrieve Pathway Info
     # Query unique pathway information
     pathway_ids <- unique(path_map$pathwayID)

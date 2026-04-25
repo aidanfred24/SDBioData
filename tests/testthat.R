@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SDBioData)
+library(pathdb)
 
-test_check("SDBioData")
+test_check("pathdb")

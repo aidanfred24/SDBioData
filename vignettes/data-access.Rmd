@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(SDBioData)
+library(pathdb)
 ```
 
 ## Introduction
@@ -44,7 +44,7 @@ srch_results
 ```
 
 ```{r print_srch, echo = FALSE}
-SDBioData:::human_srch
+pathdb:::human_srch
 ```
 
 
@@ -66,7 +66,7 @@ search_species(
 ```
 
 ```{r primary_print, echo = FALSE}
-SDBioData:::human_primary
+pathdb:::human_primary
 ```
 
 #### Academic Example
@@ -79,7 +79,7 @@ search_species(
 ```
 
 ```{r academic_print, echo = FALSE}
-SDBioData:::human_academic
+pathdb:::human_academic
 ```
 
 #### ID Example
@@ -92,7 +92,7 @@ search_species(
 ```
 
 ```{r id_print, echo = FALSE}
-SDBioData:::human_id
+pathdb:::human_id
 ```
 
 The most important piece of information to retain from the data returned by `search_species` is the `id` column. This is how many functions in this package will know which species to use for their operations.
@@ -108,7 +108,7 @@ table_names
 ```
 
 ```{r table_print, echo = FALSE}
-SDBioData:::human_tables
+pathdb:::human_tables
 ```
 
 Once we have identified a table of interest, we can retrieve its contents using the `get_table` function. For instance, we can fetch the "geneInfo" table, which contains important gene metadata like chromosomes, start positions, GC content, Ensembl IDs, and more. 
@@ -123,7 +123,7 @@ head(gene_info[, 1:5])
 ```
 
 ```{r print_genes, echo=FALSE}
-head(SDBioData:::human_genes[, 1:5])
+head(pathdb:::human_genes[, 1:5])
 ```
 
 The functions `get_genes` and `get_pathways` can also be used to obtain gene metadata and pathway information relative to the list of genes being studied. Below we use the genes from our `hypoxia_reads` data to do so. Note that these functions rely on Ensembl ID conversions from `convert_id`, discussed later in this vignette.
@@ -138,7 +138,7 @@ head(gene_info[, 1:5])
 ```
 
 ```{r print_info, echo=FALSE}
-head(SDBioData:::hypoxia_genes[,1:5])
+head(pathdb:::hypoxia_genes[, 1:5])
 ```
 
 When retrieving pathway information, it is important to know which pathway databases (e.g. KEGG, GOBP, GOCC, etc.) are available for the species of interest. For this, we may use `path_categories`.
@@ -150,7 +150,7 @@ head(categories, n = 10)
 ```
 
 ```{r print_categories, echo=FALSE}
-head(SDBioData:::categories)
+head(pathdb:::categories)
 ```
 
 ```{r rows_categories, eval=FALSE}
@@ -158,10 +158,10 @@ nrow(categories)
 ```
 
 ```{r print_nrow, echo=FALSE}
-nrow(SDBioData:::categories)
+nrow(pathdb:::categories)
 ```
 
-We see here that the human species has 140 different pathway databases. To retrieve all pathways from all databases would be very inefficient. We speed up this process by using the `category` argument in `get_pathways` to filter to specific pathway databases. This argument can be a character vector or only a single string. This feature of `SDBioData` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
+We see here that the human species has 140 different pathway databases. To retrieve all pathways from all databases would be very inefficient. We speed up this process by using the `category` argument in `get_pathways` to filter to specific pathway databases. This argument can be a character vector or only a single string. This feature of `pathdb` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
 
 Now we may obtain the specific set of pathways relative to the genes in our hypoxia data.
 
@@ -176,7 +176,7 @@ head(path_info)
 ```
 
 ```{r print_paths, echo=FALSE}
-head(SDBioData:::hypoxia_paths)
+head(pathdb:::hypoxia_paths)
 ```
 
 
@@ -199,7 +199,7 @@ head(conv_table)
 ```
 
 ```{r print_conv_vector, echo=FALSE}
-head(SDBioData:::conversion_vector)
+head(pathdb:::conversion_vector)
 ```
 
 ```{r conv_data, eval=FALSE}
@@ -214,7 +214,7 @@ knitr::kable(head(hypoxia_conv))
 ```
 
 ```{r print_conv_data, echo=FALSE}
-hypoxia_conv <- SDBioData:::conversion_data
+hypoxia_conv <- pathdb:::conversion_data
 knitr::kable(head(hypoxia_conv))
 ```
 

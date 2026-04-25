@@ -1,94 +1,66 @@
-# SDBioData
+# pathdb
 
-**SDBioData** is an R package designed to facilitate access to the South Dakota State University (SDSU) bioinformatics database (used in [iDEP](https://bioinformatics.sdstate.edu/idep/)) and perform essential data preparation tasks for gene expression analysis.
+**pathdb** is an R package designed to facilitate access to the South Dakota State University (SDSU) bioinformatics database (used in [iDEP](https://bioinformatics.sdstate.edu/idep/)) and perform essential data preparation tasks for gene expression analysis.
 
 It allows users to seamlessly retrieve species-specific gene and pathway information and process RNA-Seq data for downstream analysis using standard Bioconductor workflows.
 
 ## Installation
 
-You can install the development version of SDBioData from GitHub:
+You can install the development version of pathdb from GitHub:
 
 ```r
-# install.packages("devtools")
-devtools::install_github("aidanfred24/SDBioData")
+# install.packages("remotes")
+remotes::install_github("aidanfred24/pathdb")
 ```
 
-## Core Functionality
+## Core Features
 
-*   **Database Access**: Connect to and query the centralized SDSU bioinformatics database.
-*   **Species Search**: Easily find if your organism of interest is supported using common names, taxonomic names, or IDs.
-*   **ID Conversion**: Convert gene identifiers to standard formats (Ensembl/STRINGdb).
-*   **Data Processing**: Pre-process RNA-Seq count data (filtering, imputation, transformation) for tools like DESeq2 and edgeR.
+- **Centralized Database Access**: Connect directly to the SDSU bioinformatics database to fetch comprehensive gene and pathway data.
+- **Species Identification**: Quickly determine if your organism of interest is supported using various search queries (common names, scientific names).
+- **ID Standardization**: Convert gene identifiers into standard Ensembl formats to ensure compatibility with differential expression or pathway enrichment analysis tools.
+- **Data Pre-processing**: Clean and transform raw RNA-Seq count matrices (e.g., handling missing values, filtering low counts, applying VST/rlog transformations) for differential expression analysis.
 
-## Usage Examples
+## Quick Overview
 
-Here is a quick start guide to using `SDBioData`.
-
-### 1. Searching for a Species
-
-Before analyzing data, check if your species is available in the database using `srch_species`.
+Instead of walking through a complete data analysis pipeline (which you can find in our [vignettes](#vignettes-and-documentation)), here is a brief look at how `pathdb` can be used to access genomic information for your species of interest:
 
 ```r
-library(SDBioData)
+library(pathdb)
 
-# Search for "Human" to find Human
-srch_results <- srch_species(query = "Human", name_type = "all")
-print(srch_results)
-# Returns matches like: Human, Pediculus humanus, etc.
-```
+# 1. Check if your species is supported
+species_info <- search_species(query = "Human", name_type = "primary")
+human_id <- species_info$id[1] # ID is 96
 
-### 2. ID Conversion
-
-You can convert gene IDs in your dataset to standard Ensembl IDs using `convert_id`.
-
-```r
-# Example using the built-in 'hypoxia_reads' dataset
+# 2. Standardize gene IDs in your expression data
 data(hypoxia_reads)
-
-# Convert IDs for a vector of genes (Species ID 96 = Human)
-conv_table <- convert_id(genes = rownames(hypoxia_reads), species_id = 96)
-head(conv_table)
-
-# OR convert the entire data matrix relative to the species
-hypox_conv <- convert_id(genes = rownames(hypoxia_reads),
-                         data = hypoxia_reads,
-                         species_id = 96)
-```
-
-### 3. Connect to Database
-
-If you need direct access to the underlying SQLite database for a species:
-
-```r
-# Connect to the Human database (ID 96)
-# This handles downloading the necessary database files automatically
-conn <- connect_database(species_id = 96)
-
-# Use standard DBI queries
-db_tables <- DBI::dbListTables(conn)
-print(db_tables)
-
-DBI::dbDisconnect(conn)
-```
-
-### 4. Data Processing
-
-Use `process_data` to clean and transform raw count matrices for analysis. This includes filtering low-count genes, imputing missing values, and transforming counts (e.g., VST, rlog, or logCPM).
-
-```r
-# Example processing workflow
-processed_list <- process_data(
+clean_data <- convert_id(
+  genes = rownames(hypoxia_reads),
   data = hypoxia_reads,
-  missing_value = "geneMedian", # Impute strategy
-  min_counts = 10,              # Filter threshold
-  n_min_samples_count = 2,      # Min samples meeting threshold
-  counts_transform = 1,         # 1=log2(CPM), 2=VST, 3=rlog
-  counts_log_start = 0.75       # Pseudo-count
+  species_id = human_id
 )
 
-processed_data <- processed_list$data
-head(processed_data)
+# 3. Process data for downstream analysis
+processed_data <- process_data(
+  data = clean_data,
+  missing_value = "geneMedian",
+  min_cpm = 0.5,
+  counts_transform = 0 # 0 returns raw counts, 1=log2(CPM), 2=VST, 3=rlog
+)
+
+# 4. Retrieve pathways for your genes of interest
+pathways <- get_pathways(
+  species_id = human_id,
+  genes = rownames(processed_data),
+  category = "GOBP"
+)
 ```
+
+## Vignettes and Documentation
+
+For detailed, step-by-step tutorials on how to fully utilize `pathdb`, please refer to the package vignettes:
+
+- **Database Access and Preparation**: `vignette("data-access", package = "pathdb")`
+- **Pathway Enrichment Analysis**: `vignette("path-enrichment", package = "pathdb")`
 
 ## Requirements
 

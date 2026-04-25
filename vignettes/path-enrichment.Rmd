@@ -18,12 +18,12 @@ knitr::opts_chunk$set(
 
 Pathway enrichment analysis is a vital step in understanding the biological relevance of differential expression results. By mapping significant genes to known functional categories, researchers can gain insights into the cellular processes and pathways affected by their experimental conditions. 
 
-In this vignette, we will explore how to perform pathway enrichment analysis using the `SDBioData` package in conjunction with the popular `clusterProfiler` package. We will utilize a sample dataset, `hypoxia_deseq`, which contains differential expression results comparing treatment under hypoxic conditions.
+In this vignette, we will explore how to perform pathway enrichment analysis using the `pathdb` package in conjunction with the popular `clusterProfiler` package. We will utilize a sample dataset, `hypoxia_deseq`, which contains differential expression results comparing treatment under hypoxic conditions.
 
 First, let's load the required packages and the example dataset.
 
 ```{r setup, message=FALSE, warning=FALSE}
-library(SDBioData)
+library(pathdb)
 library(clusterProfiler)
 library(dplyr)
 
@@ -51,7 +51,7 @@ df <- hypoxia_deseq |>
 df <- df[df$diffexp != "NO" & !is.na(df$diffexp), ]
 ```
 
-Next, to ensure our gene IDs match the standard format expected by the `SDBioData` database, we can use the `convert_id` function. Here our species of interest is human (Species ID: 96).
+Next, to ensure our gene IDs match the standard format expected by the `pathdb` database, we can use the `convert_id` function. Here our species of interest is human (Species ID: 96).
 
 ```{r convert_ids, eval=FALSE}
 # Convert ids to Ensembl format to ensure compatibility
@@ -71,9 +71,9 @@ deg_results_list <- split(df, df$diffexp)
 
 ## Preparing the TERM2GENE Mapping
 
-The `clusterProfiler` function `enricher` requires background annotation data that maps pathway categories (TERMs) to gene IDs (GENEs). With the `SDBioData` package, fetching this information is streamlined using the `T2G_prep` function.
+The `clusterProfiler` function `enricher` requires background annotation data that maps pathway categories (TERMs) to gene IDs (GENEs). With the `pathdb` package, fetching this information is streamlined using the `T2G_prep` function.
 
-We will extract the KEGG pathways mapping for all the genes in our original `hypoxia_deseq` dataset, which acts as our background universe. This feature of `SDBioData` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
+We will extract the KEGG pathways mapping for all the genes in our original `hypoxia_deseq` dataset, which acts as our background universe. This feature of `pathdb` is especially versatile, as one can use a vector of pathway database names, e.g. `c("KEGG", "GOBP", "GOCC")`. In this way, we can check databases in one function call, rather than pulling from KEGG, GO, and other databases separately.
 
 ```{r t2g_prep, eval = FALSE}
 bg_genes <- T2G_prep(
@@ -176,4 +176,4 @@ gsea_res <- gsea@result |>
 head(gsea_res[, c("setSize", "enrichmentScore", "NES", "p.adjust")])
 ```
 
-By leveraging both ORA and GSEA, we can obtain complementary perspectives on the functional changes induced by our experimental conditions. The `SDBioData` functions help seamlessly bridge basic count/results data with advanced pathway analysis libraries.
+By leveraging both ORA and GSEA, we can obtain complementary perspectives on the functional changes induced by our experimental conditions. The `pathdb` functions help seamlessly bridge basic count/results data with advanced pathway analysis libraries.

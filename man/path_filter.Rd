@@ -10,14 +10,14 @@ path_filter(species_id, genes = NULL, category = "GOBP")
 \item{species_id}{Numeric. The ID of the species to search for.}
 
 \item{genes}{Character vector (optional). A vector of gene IDs to filter the pathways.
-If `NULL` (default), pathways for all genes in the category are returned.}
+If \code{NULL} (default), pathways for all genes in the category are returned.}
 
 \item{category}{Character or character vector. The pathway category or categories
-to filter by (e.g., `"GOBP"`, `"KEGG"`, `"GOCC"`). Default is `"GOBP"`.}
+to filter by (e.g., \code{"GOBP"}, \code{"KEGG"}, \code{"GOCC"}). Default is \code{"GOBP"}.}
 }
 \value{
 A data frame containing the pathway mapping information (such as
-  gene, pathway ID, and description) for the specified categories and genes.
+gene, pathway ID, and description) for the specified categories and genes.
 }
 \description{
 Retrieves pathway mapping information for a specific species, filtered by

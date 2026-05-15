@@ -15,10 +15,10 @@
 #' @param n_min_samples_count Numeric. Minimum number of samples that must meet
 #'   the `min_cpm` threshold for a gene to be retained.
 #' @param counts_transform Integer. Method for data transformation:
-#'   0. None (Raw Counts).
-#'   1. log2(CPM + `counts_log_start`)
-#'   2. Variance Stabilizing Transformation (VST) via `DESeq2`.
-#'   3. Regularized Log (rlog) via `DESeq2`.
+#'   * 0 = None (Raw Counts).
+#'   * 1 = log2(CPM + `counts_log_start`)
+#'   * 2 = Variance Stabilizing Transformation (VST) via `DESeq2`.
+#'   * 3 = Regularized Log (rlog) via `DESeq2`.
 #' @param counts_log_start Numeric. Constant added to counts before log
 #' transformation. Usually between 1 and 10. Higher values reduce noise but
 #' decrease sensitivity
@@ -26,8 +26,29 @@
 #'
 #' @returns The processed and transformed data matrix.
 #'
-#' @md
 #' @export
+#' @examples
+#' # Check example data
+#' summary(pathdb::hypoxia_reads)
+#' nrow(pathdb::hypoxia_reads)
+#'
+#' # YOU decide how your data is transformed.
+#' # Here, we want to:
+#' # Replace missing values with median
+#' # Set minimum counts-per-million of 0.4
+#' # Meet CPM threshold in 2 samples
+#' # Keep raw counts
+#'
+#' hypox_filtered <- process_data(data = pathdb::hypoxia_reads,
+#'                                missing_value = "geneMedian",
+#'                                min_cpm = 0.4,
+#'                                n_min_samples_count = 2,
+#'                                counts_transform = 0)
+#'
+#' # Check filtered data
+#' summary(hypox_filtered)
+#' nrow(hypox_filtered)
+#'
 process_data <- function(data,
                          missing_value = "geneMedian",
                          min_cpm = 0.5,
@@ -171,7 +192,7 @@ process_data <- function(data,
 #'
 #' @returns A character vector representing the group assignment for each sample.
 #' @note This function is mainly called internally by other processing functions.
-#' @export
+#' @noRd
 detect_groups <- function(sample_names, sample_info = NULL) {
     # sample_names are col names parsing samples by either the name
     # or using a data frame of sample infos.

@@ -14,5 +14,5 @@ SQLite connection to the downloaded file
 }
 \description{
 Retrieves database (.db file) from the SDSU bioinformatics database,
- creates a connection via SQLite
+creates a connection via SQLite
 }

@@ -7,15 +7,15 @@
 \format{
 A data frame with 2 columns:
 \describe{
-  \item{description}{Pathway ID or description}
-  \item{gene}{Ensembl Gene ID}
+\item{description}{Pathway ID or description}
+\item{gene}{Ensembl Gene ID}
 }
 }
 \usage{
 hypoxia_T2G
 }
 \description{
-An example TERM2GENE mapping tailored for the `hypox_deseq` dataset,
-demonstrating the `T2G_prep` function's output.
+An example TERM2GENE mapping tailored for the \code{hypox_deseq} dataset,
+demonstrating the \code{T2G_prep} function's output.
 }
 \keyword{datasets}

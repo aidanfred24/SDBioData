@@ -3,7 +3,6 @@
 export(T2G_prep)
 export(connect_database)
 export(convert_id)
-export(detect_groups)
 export(get_genes)
 export(get_pathways)
 export(get_table)

@@ -8,7 +8,7 @@ path_categories(species_id = NULL)
 }
 \arguments{
 \item{species_id}{Numeric. The ID of a desired species from database, found
-using `srch_species()`}
+using \code{srch_species()}}
 }
 \value{
 Data frame of pathway categories for given species

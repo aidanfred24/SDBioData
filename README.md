@@ -1,4 +1,4 @@
-# pathdb
+# pathdb <a href="https://aidanfred24.github.io/pathdb/"><img src="man/figures/logo.png" align="right" height="127" alt="pathdb website" /></a>
 
 **pathdb** is an R package designed to facilitate access to the South Dakota State University (SDSU) bioinformatics database (used in [iDEP](https://bioinformatics.sdstate.edu/idep/)) and perform essential data preparation tasks for gene expression analysis.
 
